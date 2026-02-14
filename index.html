@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hey Tina 💖</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to bottom, #ffe6f0, #ffcfe0);
+        color: #d63384;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        overflow: hidden;
+      }
+      h1 {
+        font-size: 3em;
+        animation: float 2s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .btn {
+        background-color: #ff4fa3;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin: 10px;
+        transition: transform 0.2s, background-color 0.3s;
+      }
+      .btn:hover {
+        transform: scale(1.1);
+        background-color: #e33c8c;
+      }
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border: 4px solid #ffb6c1;
+        max-width: 350px;
+        margin: auto;
+      }
+      footer {
+        position: absolute;
+        bottom: 20px;
+        color: #d63384;
+        font-size: 0.9em;
+      }
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hey Tina 💖</h1>
+    <p id="intro">I just wanted to ask you something really special...</p>
+    <button class="btn" id="openBtn">💌 Click to Open 💌</button>
+
+    <div class="card" id="proposal" style="display: none">
+      <h2>Will you be my Valentine?</h2>
+      <p>Because every heartbeat feels brighter when you're around 💗</p>
+      <button class="btn" id="yesBtn">Yes 💞</button>
+      <button class="btn" id="ofcBtn">Of course 💘</button>
+    </div>
+
+    <div class="card" id="thanks" style="display: none">
+      <h2>Yay! 🎉 You made my heart dance!</h2>
+      <p>This Valentine’s Day just turned magical thanks to you ✨💞</p>
+    </div>
+
+    <footer>Made with 💖 by someone who adores you.</footer>
+
+    <canvas id="confetti"></canvas>
+
+    <script>
+      const openBtn = document.getElementById('openBtn');
+      const proposal = document.getElementById('proposal');
+      const thanks = document.getElementById('thanks');
+      const intro = document.getElementById('intro');
+
+      openBtn.addEventListener('click', () => {
+        openBtn.style.display = 'none';
+        intro.style.display = 'none';
+        proposal.style.display = 'block';
+      });
+
+      document.getElementById('yesBtn').addEventListener('click', celebrate);
+      document.getElementById('ofcBtn').addEventListener('click', celebrate);
+
+      function celebrate() {
+        proposal.style.display = 'none';
+        thanks.style.display = 'block';
+        launchConfetti();
+      }
+
+      // Confetti effect
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const confettiPieces = Array.from({ length: 200 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 2 + 2,
+        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+        tilt: Math.random() * 10 - 10,
+        tiltAngleIncrement: Math.random() * 0.1 + 0.05,
+        tiltAngle: 0,
+      }));
+
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confettiPieces.forEach((p) => {
+          ctx.beginPath();
+          ctx.lineWidth = p.r;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+          ctx.stroke();
+        });
+        updateConfetti();
+      }
+
+      function updateConfetti() {
+        confettiPieces.forEach((p) => {
+          p.tiltAngle += p.tiltAngleIncrement;
+          p.y += (Math.cos(p.d) + 1 + p.r / 2) / 2;
+          p.x += Math.sin(p.d);
+          p.tilt = Math.sin(p.tiltAngle) * 15;
+          if (p.y > canvas.height) {
+            p.y = -10;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      function launchConfetti() {
+        const duration = 4000;
+        let end = Date.now() + duration;
+        (function frame() {
+          drawConfetti();
+          if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+      }
+    </script>
+  </body>
+</html>
